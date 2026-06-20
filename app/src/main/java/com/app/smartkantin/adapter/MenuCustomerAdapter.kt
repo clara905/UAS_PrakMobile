@@ -11,6 +11,7 @@ import com.app.smartkantin.utils.Formatter
 import com.bumptech.glide.Glide
 
 class MenuCustomerAdapter(
+    private val onItemClick: (MenuEntity) -> Unit,
     private val onAddClick: (MenuEntity) -> Unit
 ) : ListAdapter<MenuEntity, MenuCustomerAdapter.MenuViewHolder>(DIFF_CALLBACK) {
 
@@ -41,6 +42,7 @@ class MenuCustomerAdapter(
                 .centerCrop()
                 .into(binding.ivMenu)
 
+            binding.root.setOnClickListener { onItemClick(menu) }
             binding.btnTambah.setOnClickListener { onAddClick(menu) }
         }
     }

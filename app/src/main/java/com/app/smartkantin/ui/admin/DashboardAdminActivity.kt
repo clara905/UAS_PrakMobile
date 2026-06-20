@@ -1,48 +1,49 @@
 package com.app.smartkantin.ui.admin
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.app.smartkantin.R
 import com.app.smartkantin.databinding.ActivityDashboardAdminBinding
-import com.app.smartkantin.ui.auth.LoginActivity
-import com.app.smartkantin.utils.SessionManager
+import com.app.smartkantin.ui.admin.fragment.HomePenjualFragment
+import com.app.smartkantin.ui.admin.fragment.MenuPenjualFragment
+import com.app.smartkantin.ui.admin.fragment.OrderPenjualFragment
+import com.app.smartkantin.ui.admin.fragment.ProfilePenjualFragment
 
 class DashboardAdminActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardAdminBinding
-    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardAdminBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sessionManager = SessionManager(this)
+        setupBottomNavigation()
         
-        val namaToko = sessionManager.getNamaToko()
-        if (namaToko != null) {
-            binding.tvHeader.text = "Dashboard $namaToko"
-        } else {
-            binding.tvHeader.text = "Dashboard Penjual"
+        // Load default fragment
+        if (savedInstanceState == null) {
+            loadFragment(HomePenjualFragment())
         }
-        
-        binding.tvWelcome.text = "Selamat datang,\n${sessionManager.getNama()}"
+    }
 
-        binding.cardKelolaMenu.setOnClickListener {
-            startActivity(Intent(this, KelolaMenuActivity::class.java))
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            val fragment: Fragment = when (item.itemId) {
+                R.id.nav_home -> HomePenjualFragment()
+                R.id.nav_menu -> MenuPenjualFragment()
+                R.id.nav_order -> OrderPenjualFragment()
+                R.id.nav_profile -> ProfilePenjualFragment()
+                else -> HomePenjualFragment()
+            }
+            loadFragment(fragment)
+            true
         }
+    }
 
-        binding.cardDaftarPesanan.setOnClickListener {
-            Toast.makeText(this, "Tersedia di step berikutnya", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.btnLogout.setOnClickListener {
-            sessionManager.logout()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }

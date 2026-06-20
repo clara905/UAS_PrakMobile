@@ -42,9 +42,16 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = MenuCustomerAdapter { menu ->
-            Toast.makeText(this, "${menu.namaMenu} ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
-        }
+        adapter = MenuCustomerAdapter(
+            onItemClick = { menu ->
+                val intent = Intent(this, MenuDetailActivity::class.java)
+                intent.putExtra(MenuDetailActivity.EXTRA_MENU_ID, menu.id)
+                startActivity(intent)
+            },
+            onAddClick = { menu ->
+                Toast.makeText(this, "${menu.namaMenu} ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+            }
+        )
         binding.rvMenu.apply {
             layoutManager = LinearLayoutManager(this@DashboardCustomerActivity)
             adapter = this@DashboardCustomerActivity.adapter
