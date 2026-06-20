@@ -25,6 +25,7 @@
         <activity android:name=".ui.auth.RegisterActivity" android:exported="false" />
         <activity android:name=".ui.auth.ForgotPasswordActivity" android:exported="false" />
         <activity android:name=".ui.customer.MenuDetailActivity" android:exported="false" />
+        <activity android:name=".ui.customer.CartActivity" android:exported="false" />
         <activity android:name=".ui.admin.DashboardAdminActivity" android:exported="false" />
         <activity android:name=".ui.customer.DashboardCustomerActivity" android:exported="false" />
         <activity android:name=".ui.admin.KelolaMenuActivity" android:exported="false" />

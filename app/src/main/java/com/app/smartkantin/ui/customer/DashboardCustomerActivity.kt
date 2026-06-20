@@ -1,85 +1,49 @@
 package com.app.smartkantin.ui.customer
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.app.smartkantin.SmartKantinApp
-import com.app.smartkantin.adapter.MenuCustomerAdapter
-import com.app.smartkantin.data.repository.MenuRepository
+import androidx.fragment.app.Fragment
+import com.app.smartkantin.R
 import com.app.smartkantin.databinding.ActivityDashboardCustomerBinding
-import com.app.smartkantin.ui.auth.LoginActivity
-import com.app.smartkantin.utils.SessionManager
-import com.app.smartkantin.viewmodel.MenuViewModel
-import com.app.smartkantin.viewmodel.MenuViewModelFactory
+import com.app.smartkantin.ui.customer.fragment.HomeCustomerFragment
+import com.app.smartkantin.ui.customer.fragment.MenuCustomerFragment
+import com.app.smartkantin.ui.customer.fragment.OrderCustomerFragment
+import com.app.smartkantin.ui.customer.fragment.ProfileCustomerFragment
 
-/**
- * PLACEHOLDER — akan dilengkapi detail menu (STEP 6), keranjang (STEP 7), dst.
- */
 class DashboardCustomerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardCustomerBinding
-    private lateinit var sessionManager: SessionManager
-    private lateinit var viewModel: MenuViewModel
-    private lateinit var adapter: MenuCustomerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardCustomerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sessionManager = SessionManager(this)
-        
-        val app = application as SmartKantinApp
-        val repository = MenuRepository(app.database.menuDao())
-        viewModel = ViewModelProvider(this, MenuViewModelFactory(repository))[MenuViewModel::class.java]
+        setupBottomNavigation()
 
-        setupRecyclerView()
-        setupListeners()
-        observeViewModel()
+        // Load default fragment
+        if (savedInstanceState == null) {
+            loadFragment(HomeCustomerFragment())
+        }
     }
 
-    private fun setupRecyclerView() {
-        adapter = MenuCustomerAdapter(
-            onItemClick = { menu ->
-                val intent = Intent(this, MenuDetailActivity::class.java)
-                intent.putExtra(MenuDetailActivity.EXTRA_MENU_ID, menu.id)
-                startActivity(intent)
-            },
-            onAddClick = { menu ->
-                Toast.makeText(this, "${menu.namaMenu} ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            val fragment: Fragment = when (item.itemId) {
+                R.id.nav_home -> HomeCustomerFragment()
+                R.id.nav_menu -> MenuCustomerFragment()
+                R.id.nav_order -> OrderCustomerFragment()
+                R.id.nav_profile -> ProfileCustomerFragment()
+                else -> HomeCustomerFragment()
             }
-        )
-        binding.rvMenu.apply {
-            layoutManager = LinearLayoutManager(this@DashboardCustomerActivity)
-            adapter = this@DashboardCustomerActivity.adapter
+            loadFragment(fragment)
+            true
         }
     }
 
-    private fun setupListeners() {
-        binding.tvWelcome.text = "Selamat datang, ${sessionManager.getNama()}"
-
-        binding.btnLogout.setOnClickListener {
-            sessionManager.logout()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
-    }
-
-    private fun observeViewModel() {
-        viewModel.allMenu.observe(this) { listMenu ->
-            if (listMenu.isNullOrEmpty()) {
-                binding.tvEmptyState.visibility = android.view.View.VISIBLE
-                binding.rvMenu.visibility = android.view.View.GONE
-            } else {
-                binding.tvEmptyState.visibility = android.view.View.GONE
-                binding.rvMenu.visibility = android.view.View.VISIBLE
-                adapter.submitList(listMenu)
-            }
-        }
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }

@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.app.smartkantin.data.dao.CartDao
 import com.app.smartkantin.data.dao.MenuDao
 import com.app.smartkantin.data.dao.OrderDao
 import com.app.smartkantin.data.dao.OrderItemDao
 import com.app.smartkantin.data.dao.UserDao
+import com.app.smartkantin.data.entity.CartItemEntity
 import com.app.smartkantin.data.entity.MenuEntity
 import com.app.smartkantin.data.entity.OrderEntity
 import com.app.smartkantin.data.entity.OrderItemEntity
@@ -18,15 +20,17 @@ import com.app.smartkantin.data.entity.UserEntity
         UserEntity::class,
         MenuEntity::class,
         OrderEntity::class,
-        OrderItemEntity::class
+        OrderItemEntity::class,
+        CartItemEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun menuDao(): MenuDao
+    abstract fun cartDao(): CartDao
     abstract fun orderDao(): OrderDao
     abstract fun orderItemDao(): OrderItemDao
 

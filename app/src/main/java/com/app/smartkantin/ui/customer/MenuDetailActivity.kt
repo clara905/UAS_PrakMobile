@@ -8,6 +8,9 @@ import com.app.smartkantin.SmartKantinApp
 import com.app.smartkantin.data.repository.MenuRepository
 import com.app.smartkantin.databinding.ActivityMenuDetailBinding
 import com.app.smartkantin.utils.Formatter
+import com.app.smartkantin.utils.SessionManager
+import com.app.smartkantin.viewmodel.CartViewModel
+import com.app.smartkantin.viewmodel.CartViewModelFactory
 import com.app.smartkantin.viewmodel.MenuViewModel
 import com.app.smartkantin.viewmodel.MenuViewModelFactory
 import com.bumptech.glide.Glide
@@ -16,6 +19,8 @@ class MenuDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMenuDetailBinding
     private lateinit var viewModel: MenuViewModel
+    private lateinit var cartViewModel: CartViewModel
+    private lateinit var sessionManager: SessionManager
     private var menuId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +28,7 @@ class MenuDetailActivity : AppCompatActivity() {
         binding = ActivityMenuDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sessionManager = SessionManager(this)
         menuId = intent.getIntExtra(EXTRA_MENU_ID, -1)
         if (menuId == -1) {
             finish()
@@ -30,14 +36,22 @@ class MenuDetailActivity : AppCompatActivity() {
         }
 
         val app = application as SmartKantinApp
-        val repository = MenuRepository(app.database.menuDao())
-        viewModel = ViewModelProvider(this, MenuViewModelFactory(repository))[MenuViewModel::class.java]
+        val menuRepository = MenuRepository(app.database.menuDao())
+        val cartRepository = com.app.smartkantin.data.repository.CartRepository(app.database.cartDao())
+        
+        viewModel = ViewModelProvider(this, MenuViewModelFactory(menuRepository))[MenuViewModel::class.java]
+        cartViewModel = ViewModelProvider(this, CartViewModelFactory(cartRepository))[CartViewModel::class.java]
 
         setupToolbar()
         observeViewModel()
         
         binding.btnAddToCart.setOnClickListener {
-            Toast.makeText(this, "Berhasil ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+            viewModel.getMenuById(menuId) { menu ->
+                menu?.let {
+                    cartViewModel.addToCart(it, sessionManager.getUserId())
+                    Toast.makeText(this, "Berhasil ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
