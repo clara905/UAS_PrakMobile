@@ -105,19 +105,24 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecentOrders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardElevation="2dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="32dp"
-                android:text="Belum ada pesanan terbaru"
-                android:textAlignment="center"
-                android:textColor="@color/text_secondary" />
-        </com.google.android.material.card.MaterialCardView>
+            android:nestedScrollingEnabled="false" />
+
+        <TextView
+            android:id="@+id/tvEmptyOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="32dp"
+            android:background="@drawable/bg_rounded_soft"
+            android:text="Belum ada pesanan terbaru"
+            android:textAlignment="center"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>
