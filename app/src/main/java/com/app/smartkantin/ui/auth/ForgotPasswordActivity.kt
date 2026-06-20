@@ -19,14 +19,14 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
 
         binding.btnSubmit.setOnClickListener {
-            val username = binding.etUsername.text.toString()
-            if (username.isEmpty()) {
-                Toast.makeText(this, "Masukkan username Anda", Toast.LENGTH_SHORT).show()
+            val email = binding.etUsername.text.toString()
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Masukkan email Anda", Toast.LENGTH_SHORT).show()
             } else {
                 // Karena ini aplikasi lokal Room, kita hanya simulasi
                 Toast.makeText(
                     this,
-                    "Instruksi telah dikirim (Simulasi). Silakan hubungi admin kantin.",
+                    "Instruksi telah dikirim ke $email (Simulasi). Silakan hubungi admin kantin.",
                     Toast.LENGTH_LONG
                 ).show()
             }

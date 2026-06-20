@@ -25,26 +25,36 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     private val _registerState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
     val registerState: LiveData<AuthUiState> = _registerState
 
-    fun login(username: String, password: String) {
-        if (username.isBlank() || password.isBlank()) {
-            _loginState.value = AuthUiState.Error("Username dan password wajib diisi")
+    fun login(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            _loginState.value = AuthUiState.Error("Email dan password wajib diisi")
             return
         }
         _loginState.value = AuthUiState.Loading
         viewModelScope.launch {
-            val user = repository.login(username, password)
+            val user = repository.login(email, password)
             _loginState.value = if (user != null) {
                 AuthUiState.LoginSuccess(user)
             } else {
-                AuthUiState.Error("Username atau password salah")
+                AuthUiState.Error("Email atau password salah")
             }
         }
     }
 
-    fun register(nama: String, username: String, password: String, confirmPassword: String) {
+    fun register(
+        nama: String,
+        email: String,
+        password: String,
+        confirmPassword: String,
+        role: String,
+        namaToko: String? = null
+    ) {
         when {
-            nama.isBlank() || username.isBlank() || password.isBlank() -> {
+            nama.isBlank() || email.isBlank() || password.isBlank() -> {
                 _registerState.value = AuthUiState.Error("Semua field wajib diisi")
+            }
+            role == com.app.smartkantin.utils.Role.PENJUAL && namaToko.isNullOrBlank() -> {
+                _registerState.value = AuthUiState.Error("Nama toko wajib diisi untuk Penjual")
             }
             password.length < 6 -> {
                 _registerState.value = AuthUiState.Error("Password minimal 6 karakter")
@@ -55,12 +65,12 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             else -> {
                 _registerState.value = AuthUiState.Loading
                 viewModelScope.launch {
-                    when (repository.register(nama, username, password)) {
+                    when (repository.register(nama, email, password, role, namaToko)) {
                         is RegisterResult.Success -> {
                             _registerState.value = AuthUiState.RegisterSuccess
                         }
-                        is RegisterResult.UsernameTaken -> {
-                            _registerState.value = AuthUiState.Error("Username sudah digunakan")
+                        is RegisterResult.EmailTaken -> {
+                            _registerState.value = AuthUiState.Error("Email sudah digunakan")
                         }
                     }
                 }

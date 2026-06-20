@@ -34,12 +34,32 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        binding.rgRole.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.rbPenjual) {
+                binding.tilNamaToko.visibility = android.view.View.VISIBLE
+            } else {
+                binding.tilNamaToko.visibility = android.view.View.GONE
+                binding.etNamaToko.text?.clear()
+            }
+        }
+
         binding.btnRegister.setOnClickListener {
             val nama = binding.etNama.text.toString().trim()
-            val username = binding.etUsername.text.toString().trim()
+            val email = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
             val confirmPassword = binding.etConfirmPassword.text.toString().trim()
-            viewModel.register(nama, username, password, confirmPassword)
+            val role = if (binding.rbPenjual.isChecked) {
+                com.app.smartkantin.utils.Role.PENJUAL
+            } else {
+                com.app.smartkantin.utils.Role.PEMBELI
+            }
+            val namaToko = if (role == com.app.smartkantin.utils.Role.PENJUAL) {
+                binding.etNamaToko.text.toString().trim()
+            } else {
+                null
+            }
+
+            viewModel.register(nama, email, password, confirmPassword, role, namaToko)
         }
 
         binding.tvGoToLogin.setOnClickListener {

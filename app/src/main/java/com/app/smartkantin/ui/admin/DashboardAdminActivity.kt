@@ -19,7 +19,15 @@ class DashboardAdminActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         sessionManager = SessionManager(this)
-        binding.tvWelcome.text = "Selamat datang, ${sessionManager.getNama()} (Admin)"
+        
+        val namaToko = sessionManager.getNamaToko()
+        if (namaToko != null) {
+            binding.tvHeader.text = "Dashboard $namaToko"
+        } else {
+            binding.tvHeader.text = "Dashboard Penjual"
+        }
+        
+        binding.tvWelcome.text = "Selamat datang,\n${sessionManager.getNama()}"
 
         binding.cardKelolaMenu.setOnClickListener {
             startActivity(Intent(this, KelolaMenuActivity::class.java))

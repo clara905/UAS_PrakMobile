@@ -8,7 +8,8 @@ data class UserEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val nama: String,
-    val username: String,
+    val email: String,
     val password: String,
-    val role: String // "ADMIN" atau "PEMBELI" — lihat utils.Role
+    val role: String, // "PENJUAL" atau "PEMBELI" — lihat utils.Role
+    val namaToko: String? = null
 )

@@ -20,25 +20,26 @@ class SmartKantinApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        seedDefaultAdmin()
+        seedDefaultPenjual()
     }
 
     /**
      * Membuat akun admin default agar fitur Login Admin (STEP 3)
      * bisa langsung dites tanpa perlu insert manual ke database.
      */
-    private fun seedDefaultAdmin() {
+    private fun seedDefaultPenjual() {
         applicationScope.launch {
             val existingAdmin = database.userDao()
-                .getUserByUsername(DefaultAccount.ADMIN_USERNAME)
+                .getUserByEmail(DefaultAccount.PENJUAL_EMAIL)
 
             if (existingAdmin == null) {
                 database.userDao().insertUser(
                     UserEntity(
-                        nama = "Administrator",
-                        username = DefaultAccount.ADMIN_USERNAME,
-                        password = DefaultAccount.ADMIN_PASSWORD,
-                        role = Role.ADMIN
+                        nama = "Penjual Utama",
+                        email = DefaultAccount.PENJUAL_EMAIL,
+                        password = DefaultAccount.PENJUAL_PASSWORD,
+                        role = Role.PENJUAL,
+                        namaToko = "Kantin Pusat"
                     )
                 )
             }

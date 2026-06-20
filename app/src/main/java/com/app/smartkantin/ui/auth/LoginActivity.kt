@@ -42,9 +42,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnLogin.setOnClickListener {
-            val username = binding.etUsername.text.toString().trim()
+            val email = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
-            viewModel.login(username, password)
+            viewModel.login(email, password)
         }
 
         binding.tvGoToRegister.setOnClickListener {
@@ -67,8 +67,9 @@ class LoginActivity : AppCompatActivity() {
                     sessionManager.saveSession(
                         userId = state.user.id,
                         nama = state.user.nama,
-                        username = state.user.username,
-                        role = state.user.role
+                        email = state.user.email,
+                        role = state.user.role,
+                        namaToko = state.user.namaToko
                     )
                     navigateToDashboard(state.user.role)
                 }
@@ -83,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToDashboard(role: String) {
-        val intent = if (role == Role.ADMIN) {
+        val intent = if (role == Role.PENJUAL) {
             Intent(this, DashboardAdminActivity::class.java)
         } else {
             Intent(this, DashboardCustomerActivity::class.java)

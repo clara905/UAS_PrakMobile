@@ -4,7 +4,7 @@ package com.app.smartkantin.utils
  * Role pengguna pada tabel User.
  */
 object Role {
-    const val ADMIN = "ADMIN"
+    const val PENJUAL = "PENJUAL"
     const val PEMBELI = "PEMBELI"
 }
 
@@ -18,6 +18,6 @@ object OrderStatus {
 }
 
 object DefaultAccount {
-    const val ADMIN_USERNAME = "admin"
-    const val ADMIN_PASSWORD = "admin123"
+    const val PENJUAL_EMAIL = "penjual@gmail.com"
+    const val PENJUAL_PASSWORD = "penjual123"
 }

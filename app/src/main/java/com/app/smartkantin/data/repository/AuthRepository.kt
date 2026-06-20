@@ -6,25 +6,32 @@ import com.app.smartkantin.utils.Role
 
 sealed class RegisterResult {
     object Success : RegisterResult()
-    object UsernameTaken : RegisterResult()
+    object EmailTaken : RegisterResult()
 }
 
 class AuthRepository(private val userDao: UserDao) {
 
-    suspend fun login(username: String, password: String): UserEntity? {
-        return userDao.login(username, password)
+    suspend fun login(email: String, password: String): UserEntity? {
+        return userDao.login(email, password)
     }
 
-    suspend fun register(nama: String, username: String, password: String): RegisterResult {
-        val existing = userDao.getUserByUsername(username)
+    suspend fun register(
+        nama: String,
+        email: String,
+        password: String,
+        role: String,
+        namaToko: String? = null
+    ): RegisterResult {
+        val existing = userDao.getUserByEmail(email)
         if (existing != null) {
-            return RegisterResult.UsernameTaken
+            return RegisterResult.EmailTaken
         }
         val newUser = UserEntity(
             nama = nama,
-            username = username,
+            email = email,
             password = password,
-            role = Role.PEMBELI
+            role = role,
+            namaToko = namaToko
         )
         userDao.insertUser(newUser)
         return RegisterResult.Success

@@ -20,7 +20,7 @@ import com.app.smartkantin.data.entity.UserEntity
         OrderEntity::class,
         OrderItemEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

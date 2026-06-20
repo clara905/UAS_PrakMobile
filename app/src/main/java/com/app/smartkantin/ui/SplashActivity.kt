@@ -32,7 +32,7 @@ class SplashActivity : AppCompatActivity() {
 
         val intent = if (sessionManager.isLoggedIn()) {
             when (sessionManager.getRole()) {
-                Role.ADMIN -> Intent(this, DashboardAdminActivity::class.java)
+                Role.PENJUAL -> Intent(this, DashboardAdminActivity::class.java)
                 else -> Intent(this, DashboardCustomerActivity::class.java)
             }
         } else {
