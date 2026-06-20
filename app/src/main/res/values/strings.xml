@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Smart Kantin</string>
+    <string name="login">Login</string>
+    <string name="register">Daftar</string>
 </resources>
