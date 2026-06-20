@@ -2,15 +2,12 @@ package com.app.smartkantin.ui.admin
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.app.smartkantin.databinding.ActivityDashboardAdminBinding
 import com.app.smartkantin.ui.auth.LoginActivity
 import com.app.smartkantin.utils.SessionManager
 
-/**
- * PLACEHOLDER — akan dilengkapi fitur Kelola Menu (STEP 4)
- * dan Daftar Pesanan (STEP 9).
- */
 class DashboardAdminActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardAdminBinding
@@ -23,6 +20,14 @@ class DashboardAdminActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
         binding.tvWelcome.text = "Selamat datang, ${sessionManager.getNama()} (Admin)"
+
+        binding.cardKelolaMenu.setOnClickListener {
+            startActivity(Intent(this, KelolaMenuActivity::class.java))
+        }
+
+        binding.cardDaftarPesanan.setOnClickListener {
+            Toast.makeText(this, "Tersedia di step berikutnya", Toast.LENGTH_SHORT).show()
+        }
 
         binding.btnLogout.setOnClickListener {
             sessionManager.logout()
