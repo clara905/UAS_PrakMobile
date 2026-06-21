@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.app.smartkantin.data.entity.MenuEntity
 import com.app.smartkantin.data.repository.MenuRepository
@@ -18,8 +19,32 @@ sealed class MenuFormState {
 
 class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
-    // Reaktif: otomatis ter-update setiap ada perubahan data menu (insert/update/delete)
-    val allMenu: LiveData<List<MenuEntity>> = repository.getAllMenu().asLiveData()
+    private val _searchQuery = MutableLiveData<String>("")
+    private val _categoryFilter = MutableLiveData<String>("")
+    
+    // Combine search and category
+    private val _menuTrigger = androidx.lifecycle.MediatorLiveData<Pair<String, String>>().apply {
+        addSource(_searchQuery) { query -> value = Pair(query ?: "", _categoryFilter.value ?: "") }
+        addSource(_categoryFilter) { category -> value = Pair(_searchQuery.value ?: "", category ?: "") }
+    }
+
+    val allMenu: LiveData<List<MenuEntity>> = _menuTrigger.switchMap { (query, category) ->
+        when {
+            !category.isNullOrBlank() -> repository.getMenuByCategory(category).asLiveData()
+            !query.isNullOrBlank() -> repository.searchMenu(query).asLiveData()
+            else -> repository.getAllMenu().asLiveData()
+        }
+    }
+
+    fun searchMenu(query: String) {
+        _categoryFilter.value = "" // Reset category when searching
+        _searchQuery.value = query
+    }
+
+    fun filterByCategory(category: String) {
+        _searchQuery.value = "" // Reset search when filtering by category
+        _categoryFilter.value = category
+    }
 
     private val _formState = MutableLiveData<MenuFormState>(MenuFormState.Idle)
     val formState: LiveData<MenuFormState> = _formState

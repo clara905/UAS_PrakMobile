@@ -22,6 +22,9 @@ interface MenuDao {
     @Query("SELECT * FROM menu ORDER BY namaMenu ASC")
     fun getAllMenu(): Flow<List<MenuEntity>>
 
+    @Query("SELECT * FROM menu WHERE kategori = :kategori ORDER BY namaMenu ASC")
+    fun getMenuByCategory(kategori: String): Flow<List<MenuEntity>>
+
     @Query("SELECT * FROM menu WHERE namaMenu LIKE '%' || :keyword || '%' ORDER BY namaMenu ASC")
     fun searchMenu(keyword: String): Flow<List<MenuEntity>>
 }

@@ -3,7 +3,6 @@ package com.app.smartkantin.viewmodel
 import androidx.lifecycle.*
 import com.app.smartkantin.data.dao.OrderDao
 import com.app.smartkantin.data.entity.OrderEntity
-import com.app.smartkantin.utils.OrderStatus
 import kotlinx.coroutines.launch
 
 class OrderViewModel(private val orderDao: OrderDao) : ViewModel() {
@@ -16,14 +15,9 @@ class OrderViewModel(private val orderDao: OrderDao) : ViewModel() {
         return orderDao.getAllOrders().asLiveData()
     }
 
-    fun updateStatus(orderId: Int, currentStatus: String) {
-        val nextStatus = when (currentStatus) {
-            OrderStatus.MENUNGGU -> OrderStatus.DIPROSES
-            OrderStatus.DIPROSES -> OrderStatus.SELESAI
-            else -> currentStatus
-        }
+    fun updateStatus(orderId: Int, newStatus: String) {
         viewModelScope.launch {
-            orderDao.updateStatus(orderId, nextStatus)
+            orderDao.updateStatus(orderId, newStatus)
         }
     }
 }

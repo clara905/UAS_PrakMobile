@@ -27,6 +27,20 @@
         <item name="materialButtonStyle">@style/Widget.SmartKantin.Button</item>
         <item name="materialCardViewStyle">@style/Widget.SmartKantin.CardView</item>
         <item name="textInputStyle">@style/Widget.SmartKantin.TextInputLayout</item>
+        <item name="alertDialogTheme">@style/Theme.SmartKantin.Dialog</item>
+    </style>
+
+    <style name="Theme.SmartKantin.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="android:background">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.SmartKantin.Button.Text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.SmartKantin.Button.Text</item>
+    </style>
+
+    <style name="Widget.SmartKantin.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
     </style>
 
     <style name="Widget.SmartKantin.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -42,6 +56,20 @@
         <item name="boxBackgroundColor">@color/white</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="endIconTint">@color/primary</item>
+    </style>
+
+    <style name="Widget.SmartKantin.TextInputLayout.ExposedDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">@dimen/corner_radius_medium</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_radius_medium</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_radius_medium</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_radius_medium</item>
+        <item name="boxStrokeColor">@color/input_stroke_color</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="ShapeAppearance.SmartKantin.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">

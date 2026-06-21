@@ -59,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Punya kode promo?"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                app:boxStrokeColor="@color/input_stroke_color"
+                style="@style/Widget.SmartKantin.TextInputLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPromo"

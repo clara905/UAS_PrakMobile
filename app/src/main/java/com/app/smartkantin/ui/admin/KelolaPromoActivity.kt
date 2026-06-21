@@ -13,7 +13,9 @@ import com.app.smartkantin.SmartKantinApp
 import com.app.smartkantin.adapter.PromoAdapter
 import com.app.smartkantin.data.repository.PromoRepository
 import com.app.smartkantin.databinding.ActivityKelolaPromoBinding
+import com.app.smartkantin.databinding.DialogAddPromoBinding
 import com.app.smartkantin.viewmodel.PromoViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.app.smartkantin.viewmodel.PromoViewModelFactory
 
 class KelolaPromoActivity : AppCompatActivity() {
@@ -58,29 +60,14 @@ class KelolaPromoActivity : AppCompatActivity() {
     }
 
     private fun showAddPromoDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Tambah Promo Baru")
-
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-        layout.setPadding(40, 20, 40, 20)
-
-        val etKode = EditText(this).apply { hint = "Kode Promo (Contoh: HEMAT10)" }
-        val etDesc = EditText(this).apply { hint = "Deskripsi" }
-        val etPersen = EditText(this).apply { 
-            hint = "Persen Potongan (1-100)"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-        }
-
-        layout.addView(etKode)
-        layout.addView(etDesc)
-        layout.addView(etPersen)
-        builder.setView(layout)
+        val dialogBinding = DialogAddPromoBinding.inflate(layoutInflater)
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setView(dialogBinding.root)
 
         builder.setPositiveButton("Simpan") { _, _ ->
-            val kode = etKode.text.toString().trim()
-            val desc = etDesc.text.toString().trim()
-            val persen = etPersen.text.toString().toIntOrNull() ?: 0
+            val kode = dialogBinding.etKode.text.toString().trim()
+            val desc = dialogBinding.etDesc.text.toString().trim()
+            val persen = dialogBinding.etPersen.text.toString().toIntOrNull() ?: 0
 
             if (kode.isNotEmpty() && desc.isNotEmpty() && persen > 0) {
                 viewModel.addPromo(kode, desc, persen)

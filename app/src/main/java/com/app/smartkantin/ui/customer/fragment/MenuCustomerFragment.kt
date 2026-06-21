@@ -74,8 +74,21 @@ class MenuCustomerFragment : Fragment() {
 
     private fun setupSearch() {
         binding.etSearch.addTextChangedListener { editable ->
-            val query = editable.toString()
-            // Logic search bisa di sini (filter list)
+            val query = editable.toString().trim()
+            viewModel.searchMenu(query)
+        }
+
+        binding.tilSearch.setStartIconOnClickListener {
+            val query = binding.etSearch.text.toString().trim()
+            viewModel.searchMenu(query)
+        }
+
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                val query = binding.etSearch.text.toString().trim()
+                viewModel.searchMenu(query)
+                true
+            } else false
         }
     }
 

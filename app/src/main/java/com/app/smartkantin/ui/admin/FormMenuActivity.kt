@@ -68,7 +68,7 @@ class FormMenuActivity : AppCompatActivity() {
     }
 
     private fun setupCategoryDropdown() {
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        val adapter = ArrayAdapter(this, com.app.smartkantin.R.layout.item_dropdown, categories)
         binding.actKategori.setAdapter(adapter)
     }
 

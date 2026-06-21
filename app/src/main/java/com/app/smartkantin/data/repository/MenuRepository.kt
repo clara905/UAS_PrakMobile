@@ -8,6 +8,8 @@ class MenuRepository(private val menuDao: MenuDao) {
 
     fun getAllMenu(): Flow<List<MenuEntity>> = menuDao.getAllMenu()
 
+    fun getMenuByCategory(kategori: String): Flow<List<MenuEntity>> = menuDao.getMenuByCategory(kategori)
+
     fun searchMenu(keyword: String): Flow<List<MenuEntity>> = menuDao.searchMenu(keyword)
 
     suspend fun getMenuById(id: Int): MenuEntity? = menuDao.getMenuById(id)

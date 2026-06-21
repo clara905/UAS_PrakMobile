@@ -44,18 +44,19 @@ class OrderPenjualFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = OrderAdapter(isAdmin = true) { order ->
-            val nextStatus = when (order.status) {
-                com.app.smartkantin.utils.OrderStatus.MENUNGGU -> "Sedang Diproses"
-                com.app.smartkantin.utils.OrderStatus.DIPROSES -> "Siap Diambil"
-                else -> ""
+            val (nextStatus, statusLabel) = when (order.status) {
+                OrderStatus.MENUNGGU -> OrderStatus.DIPROSES to "Sedang Diproses"
+                OrderStatus.DIPROSES -> OrderStatus.SELESAI to "Siap Diambil"
+                else -> "" to ""
             }
+            
             if (nextStatus.isNotEmpty()) {
+                viewModel.updateStatus(order.id, nextStatus)
                 notificationHelper.sendNotification(
                     "Update Pesanan",
-                    "Pesanan #${order.id} $nextStatus!"
+                    "Pesanan #${order.id} $statusLabel!"
                 )
             }
-            viewModel.updateStatus(order.id, order.status)
         }
         binding.rvOrders.apply {
             layoutManager = LinearLayoutManager(requireContext())

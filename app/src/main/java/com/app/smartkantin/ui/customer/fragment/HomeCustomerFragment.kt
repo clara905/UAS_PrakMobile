@@ -71,6 +71,11 @@ class HomeCustomerFragment : Fragment() {
         binding.catMinuman.ivCategory.setImageResource(com.app.smartkantin.R.drawable.ic_category_minuman)
         binding.catCemilan.ivCategory.setImageResource(com.app.smartkantin.R.drawable.ic_category_cemilan)
         binding.catSayuran.ivCategory.setImageResource(com.app.smartkantin.R.drawable.ic_category_sayuran)
+
+        binding.catMakanan.root.setOnClickListener { viewModel.filterByCategory("Makanan") }
+        binding.catMinuman.root.setOnClickListener { viewModel.filterByCategory("Minuman") }
+        binding.catCemilan.root.setOnClickListener { viewModel.filterByCategory("Cemilan") }
+        binding.catSayuran.root.setOnClickListener { viewModel.filterByCategory("Sayuran") }
     }
 
     private fun setupRecyclerView() {
@@ -87,7 +92,8 @@ class HomeCustomerFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.allMenu.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list.take(4)) 
+            // Jika ada filter kategori, tampilkan semua yang sesuai. Jika tidak, ambil 4 saja (populer)
+            adapter.submitList(list)
         }
 
         promoViewModel.allPromos.observe(viewLifecycleOwner) { promos ->

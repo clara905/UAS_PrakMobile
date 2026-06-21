@@ -26,13 +26,16 @@
         android:layout_marginTop="16dp"
         android:hint="Cari makanan atau minuman..."
         app:startIconDrawable="@android:drawable/ic_menu_search"
+        app:startIconTint="@color/primary"
+        style="@style/Widget.SmartKantin.TextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"
+            android:imeOptions="actionSearch" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
