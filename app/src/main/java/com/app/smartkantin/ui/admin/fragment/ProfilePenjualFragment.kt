@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatDelegate
 import com.app.smartkantin.databinding.FragmentProfilePenjualBinding
 import com.app.smartkantin.ui.auth.LoginActivity
 import com.app.smartkantin.utils.SessionManager
@@ -30,6 +31,17 @@ class ProfilePenjualFragment : Fragment() {
         binding.tvNama.text = sessionManager.getNama()
         binding.tvEmail.text = sessionManager.getEmail()
         binding.tvNamaToko.text = sessionManager.getNamaToko()
+
+        // Dark Mode Logic
+        binding.switchDarkMode.isChecked = sessionManager.isDarkMode()
+        binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            sessionManager.setDarkMode(isChecked)
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
 
         binding.btnLogout.setOnClickListener {
             sessionManager.logout()

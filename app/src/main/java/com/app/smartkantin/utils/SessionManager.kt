@@ -36,6 +36,12 @@ class SessionManager(context: Context) {
         prefs.edit().clear().apply()
     }
 
+    fun setDarkMode(isDark: Boolean) {
+        prefs.edit().putBoolean(KEY_DARK_MODE, isDark).apply()
+    }
+
+    fun isDarkMode(): Boolean = prefs.getBoolean(KEY_DARK_MODE, false)
+
     companion object {
         private const val PREF_NAME = "smartkantin_session"
         private const val KEY_USER_ID = "key_user_id"
@@ -44,5 +50,6 @@ class SessionManager(context: Context) {
         private const val KEY_ROLE = "key_role"
         private const val KEY_NAMA_TOKO = "key_nama_toko"
         private const val KEY_IS_LOGIN = "key_is_login"
+        private const val KEY_DARK_MODE = "key_dark_mode"
     }
 }

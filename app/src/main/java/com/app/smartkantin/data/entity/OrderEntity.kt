@@ -20,8 +20,8 @@ import androidx.room.PrimaryKey
 data class OrderEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val userId: Int,
-    val totalHarga: Double,
-    val status: String, // MENUNGGU / DIPROSES / SELESAI — lihat utils.OrderStatus
-    val tanggal: String // disimpan sebagai String format "yyyy-MM-dd HH:mm"
+    val userId: Int = 0,
+    val totalHarga: Double = 0.0,
+    val status: String = "",
+    val tanggal: String = ""
 )

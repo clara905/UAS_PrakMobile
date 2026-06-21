@@ -26,15 +26,18 @@ class PromoViewModel(private val repository: PromoRepository) : ViewModel() {
 
     fun addPromo(kode: String, deskripsi: String, persen: Int) {
         viewModelScope.launch {
-            repository.insertPromo(
-                PromoEntity(kodePromo = kode, deskripsi = deskripsi, persenPotongan = persen, minBelanja = 0.0)
-            )
+            val promo = PromoEntity(kodePromo = kode, deskripsi = deskripsi, persenPotongan = persen, minBelanja = 0.0)
+            val newId = repository.insertPromo(promo).toInt()
+            // Sync promo ke Firebase
+            com.app.smartkantin.utils.FirebaseSync.sendPromo(promo.copy(id = newId))
         }
     }
 
     fun deletePromo(promo: PromoEntity) {
         viewModelScope.launch {
             repository.deletePromo(promo)
+            // Hapus juga di Firebase
+            com.app.smartkantin.utils.FirebaseSync.deletePromo(promo.id)
         }
     }
 }

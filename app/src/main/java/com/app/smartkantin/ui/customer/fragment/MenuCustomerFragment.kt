@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.smartkantin.SmartKantinApp
 import com.app.smartkantin.adapter.MenuCustomerAdapter
@@ -29,6 +30,7 @@ class MenuCustomerFragment : Fragment() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var sessionManager: SessionManager
     private lateinit var adapter: MenuCustomerAdapter
+    private var isGridView = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +53,27 @@ class MenuCustomerFragment : Fragment() {
 
         setupRecyclerView()
         setupSearch()
+        setupLayoutSwitch()
         observeViewModel()
+    }
+
+    private fun setupLayoutSwitch() {
+        binding.btnSwitchLayout.setOnClickListener {
+            isGridView = !isGridView
+            adapter.setGridView(isGridView) // Kasih tau adapter buat ganti layout item
+            updateRecyclerViewLayout()
+            // Update icon
+            val icon = if (isGridView) android.R.drawable.ic_menu_sort_by_size else android.R.drawable.ic_dialog_dialer
+            binding.btnSwitchLayout.setImageResource(icon)
+        }
+    }
+
+    private fun updateRecyclerViewLayout() {
+        binding.rvMenu.layoutManager = if (isGridView) {
+            GridLayoutManager(requireContext(), 2)
+        } else {
+            LinearLayoutManager(requireContext())
+        }
     }
 
     private fun setupRecyclerView() {
@@ -66,10 +88,8 @@ class MenuCustomerFragment : Fragment() {
                 Toast.makeText(requireContext(), "${menu.namaMenu} ditambahkan", Toast.LENGTH_SHORT).show()
             }
         )
-        binding.rvMenu.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@MenuCustomerFragment.adapter
-        }
+        binding.rvMenu.adapter = adapter
+        updateRecyclerViewLayout()
     }
 
     private fun setupSearch() {

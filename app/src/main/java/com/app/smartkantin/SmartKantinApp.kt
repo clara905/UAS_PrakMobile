@@ -24,6 +24,15 @@ class SmartKantinApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        
+        // Initialize Dark Mode based on preference
+        val sessionManager = com.app.smartkantin.utils.SessionManager(this)
+        if (sessionManager.isDarkMode()) {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         notificationHelper = NotificationHelper(this)
         seedDefaultPenjual()
         seedDefaultPromo()

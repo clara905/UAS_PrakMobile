@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PromoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPromo(promo: PromoEntity)
+    suspend fun insertPromo(promo: PromoEntity): Long
 
     @Update
     suspend fun updatePromo(promo: PromoEntity)

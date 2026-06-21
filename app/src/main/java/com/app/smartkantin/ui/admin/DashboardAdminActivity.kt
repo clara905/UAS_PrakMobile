@@ -11,9 +11,14 @@ import com.app.smartkantin.ui.admin.fragment.HomePenjualFragment
 import com.app.smartkantin.ui.admin.fragment.MenuPenjualFragment
 import com.app.smartkantin.ui.admin.fragment.OrderPenjualFragment
 import com.app.smartkantin.ui.admin.fragment.ProfilePenjualFragment
+import com.app.smartkantin.utils.FirebaseConfig
 import com.app.smartkantin.utils.NotificationHelper
 import com.app.smartkantin.viewmodel.OrderViewModel
 import com.app.smartkantin.viewmodel.OrderViewModelFactory
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class DashboardAdminActivity : AppCompatActivity() {
 
@@ -33,11 +38,34 @@ class DashboardAdminActivity : AppCompatActivity() {
 
         setupBottomNavigation()
         observeNewOrders()
+        listenForNewOrdersFirebase()
         
         // Load default fragment
         if (savedInstanceState == null) {
             loadFragment(HomePenjualFragment())
         }
+    }
+
+    /**
+     * Dengerin pesanan baru masuk dari Firebase (Online).
+     * Jadi penjual dapet notif meskipun pembeli pesen pake HP lain.
+     */
+    private fun listenForNewOrdersFirebase() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("orders")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentCount = snapshot.childrenCount.toInt()
+                if (lastOrderCount != -1 && currentCount > lastOrderCount) {
+                    notificationHelper.sendNotification(
+                        "Pesanan Baru (Online)!",
+                        "Ada pesanan baru masuk ke sistem Firebase."
+                    )
+                }
+                lastOrderCount = currentCount
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun observeNewOrders() {

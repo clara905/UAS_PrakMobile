@@ -11,11 +11,16 @@ import com.app.smartkantin.ui.customer.fragment.HomeCustomerFragment
 import com.app.smartkantin.ui.customer.fragment.MenuCustomerFragment
 import com.app.smartkantin.ui.customer.fragment.OrderCustomerFragment
 import com.app.smartkantin.ui.customer.fragment.ProfileCustomerFragment
+import com.app.smartkantin.utils.FirebaseConfig
 import com.app.smartkantin.utils.NotificationHelper
 import com.app.smartkantin.utils.OrderStatus
 import com.app.smartkantin.utils.SessionManager
 import com.app.smartkantin.viewmodel.OrderViewModel
 import com.app.smartkantin.viewmodel.OrderViewModelFactory
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class DashboardCustomerActivity : AppCompatActivity() {
 
@@ -38,11 +43,57 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
         setupBottomNavigation()
         observeOrderUpdates()
+        listenToFirebaseUpdates()
 
         // Load default fragment
         if (savedInstanceState == null) {
             loadFragment(HomeCustomerFragment())
         }
+    }
+
+    /**
+     * Dengerin perubahan status pesanan langsung dari Firebase Realtime Database.
+     * Ini yang bikin notifikasi bisa masuk lintas HP (Online).
+     */
+    private fun listenToFirebaseUpdates() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("orders")
+        val userId = sessionManager.getUserId()
+
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach { child ->
+                    val orderMap = child.value as? Map<*, *> ?: return@forEach
+                    val fUserId = (orderMap["userId"] as? Long)?.toInt() ?: 0
+                    
+                    // Cek apakah ini pesanan milik user yang sedang login
+                    if (fUserId == userId) {
+                        val orderId = (orderMap["id"] as? Long)?.toInt() ?: 0
+                        val status = orderMap["status"] as? String ?: ""
+                        
+                        val prevStatus = lastOrderStatuses[orderId]
+                        if (prevStatus != null && prevStatus != status) {
+                            when (status) {
+                                OrderStatus.DIPROSES -> {
+                                    notificationHelper.sendNotification(
+                                        "Pesanan Diproses",
+                                        "Pesanan #$orderId sedang disiapkan penjual."
+                                    )
+                                }
+                                OrderStatus.SELESAI -> {
+                                    notificationHelper.sendNotification(
+                                        "Makanan Siap!",
+                                        "Pesanan #$orderId sudah siap! Silakan ambil di kantin."
+                                    )
+                                }
+                            }
+                        }
+                        lastOrderStatuses[orderId] = status
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun observeOrderUpdates() {

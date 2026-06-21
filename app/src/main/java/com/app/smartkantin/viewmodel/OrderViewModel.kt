@@ -18,6 +18,8 @@ class OrderViewModel(private val orderDao: OrderDao) : ViewModel() {
     fun updateStatus(orderId: Int, newStatus: String) {
         viewModelScope.launch {
             orderDao.updateStatus(orderId, newStatus)
+            // Sync status ke Firebase agar pembeli dapat notif
+            com.app.smartkantin.utils.FirebaseSync.updateOrderStatus(orderId, newStatus)
         }
     }
 }

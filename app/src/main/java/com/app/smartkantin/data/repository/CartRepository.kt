@@ -53,6 +53,10 @@ class CartRepository(
             )
         ).toInt()
 
+        // Sync ke Firebase setelah simpan lokal berhasil
+        val newOrder = orderDao.getOrderById(orderId)
+        newOrder?.let { com.app.smartkantin.utils.FirebaseSync.sendOrder(it) }
+
         val orderItems = items.map {
             OrderItemEntity(
                 orderId = orderId,

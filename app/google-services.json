@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "380956322679",
+    "project_id": "smartkantin-91402",
+    "storage_bucket": "smartkantin-91402.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380956322679:android:e529b0ae5204c62ff28f72",
+        "android_client_info": {
+          "package_name": "com.app.smartkantin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380956322679-rrms6imrd73ug3jqafrb9ualse4ii70p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfm8wdcj2VDrITIIYo90RVD2eR4WVzjzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380956322679-rrms6imrd73ug3jqafrb9ualse4ii70p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

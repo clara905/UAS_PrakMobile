@@ -84,9 +84,13 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                 kategori = kategori
             )
             if (id == 0) {
-                repository.insertMenu(menu)
+                val newId = repository.insertMenu(menu).toInt()
+                // Sync menu baru ke Firebase
+                com.app.smartkantin.utils.FirebaseSync.sendMenu(menu.copy(id = newId))
             } else {
                 repository.updateMenu(menu)
+                // Sync update menu ke Firebase
+                com.app.smartkantin.utils.FirebaseSync.sendMenu(menu)
             }
             _formState.value = MenuFormState.Success
         }
@@ -95,6 +99,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     fun deleteMenu(menu: MenuEntity) {
         viewModelScope.launch {
             repository.deleteMenu(menu)
+            // Hapus juga di Firebase
+            com.app.smartkantin.utils.FirebaseSync.deleteMenu(menu.id)
         }
     }
 

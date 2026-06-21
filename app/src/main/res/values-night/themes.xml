@@ -1,7 +1,32 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Smartkantin" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.SmartKantin" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/background</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent</item>
+        <item name="colorOnSecondary">@color/background</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Window background. -->
+        <item name="android:windowBackground">@color/background</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:editTextColor">@color/text_primary</item>
+
+        <!-- Shape Appearance -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.SmartKantin.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.SmartKantin.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.SmartKantin.LargeComponent</item>
+
+        <!-- Component Styles -->
+        <item name="materialButtonStyle">@style/Widget.SmartKantin.Button</item>
+        <item name="materialCardViewStyle">@style/Widget.SmartKantin.CardView</item>
+        <item name="textInputStyle">@style/Widget.SmartKantin.TextInputLayout</item>
+        <item name="alertDialogTheme">@style/Theme.SmartKantin.Dialog</item>
     </style>
 </resources>
