@@ -30,6 +30,7 @@
         <activity android:name=".ui.customer.DashboardCustomerActivity" android:exported="false" />
         <activity android:name=".ui.admin.KelolaMenuActivity" android:exported="false" />
         <activity android:name=".ui.admin.FormMenuActivity" android:exported="false" />
+        <activity android:name=".ui.admin.KelolaPromoActivity" android:exported="false" />
 
     </application>
 

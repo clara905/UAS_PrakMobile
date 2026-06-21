@@ -3,13 +3,12 @@ package com.app.smartkantin.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "menu")
-data class MenuEntity(
+@Entity(tableName = "promos")
+data class PromoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val namaMenu: String,
+    val kodePromo: String,
     val deskripsi: String,
-    val harga: Double,
-    val gambar: String, // path lokal / uri gambar menu
-    val kategori: String
+    val persenPotongan: Int,
+    val minBelanja: Double
 )

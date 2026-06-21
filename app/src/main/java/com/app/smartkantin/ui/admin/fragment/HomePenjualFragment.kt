@@ -41,7 +41,14 @@ class HomePenjualFragment : Fragment() {
         orderViewModel = ViewModelProvider(this, OrderViewModelFactory(app.database.orderDao()))[OrderViewModel::class.java]
 
         setupRecyclerView()
+        setupListeners()
         observeData()
+    }
+
+    private fun setupListeners() {
+        binding.btnManagePromo.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), com.app.smartkantin.ui.admin.KelolaPromoActivity::class.java))
+        }
     }
 
     private fun setupRecyclerView() {

@@ -3,6 +3,7 @@ package com.app.smartkantin.ui.admin
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -22,8 +23,9 @@ class FormMenuActivity : AppCompatActivity() {
 
     private var menuId: Int = 0
     private var selectedImageUri: String = ""
+    private val categories = listOf("Makanan", "Minuman", "Cemilan", "Sayuran")
 
-    // Photo Picker bawaan Android — tidak butuh izin runtime tambahan
+    // ...
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -60,8 +62,14 @@ class FormMenuActivity : AppCompatActivity() {
             binding.tvFormTitle.text = "Tambah Menu"
         }
 
+        setupCategoryDropdown()
         setupListeners()
         observeViewModel()
+    }
+
+    private fun setupCategoryDropdown() {
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        binding.actKategori.setAdapter(adapter)
     }
 
     private fun loadExistingMenu() {
@@ -69,6 +77,7 @@ class FormMenuActivity : AppCompatActivity() {
             menu?.let {
                 binding.etNamaMenu.setText(it.namaMenu)
                 binding.etDeskripsi.setText(it.deskripsi)
+                binding.actKategori.setText(it.kategori, false)
                 binding.etHarga.setText(it.harga.toInt().toString())
                 selectedImageUri = it.gambar
                 if (it.gambar.isNotBlank()) {
@@ -92,7 +101,8 @@ class FormMenuActivity : AppCompatActivity() {
                 namaMenu = binding.etNamaMenu.text.toString().trim(),
                 deskripsi = binding.etDeskripsi.text.toString().trim(),
                 hargaText = binding.etHarga.text.toString().trim(),
-                gambar = selectedImageUri
+                gambar = selectedImageUri,
+                kategori = binding.actKategori.text.toString().trim()
             )
         }
     }

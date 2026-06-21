@@ -70,6 +70,7 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
                 <TextView
+                    android:id="@+id/tvPromoTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Promo Hari Ini"
@@ -79,9 +80,10 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
                 <TextView
+                    android:id="@+id/tvPromoDesc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Diskon 20% untuk\nSemua Minuman"
+                    android:text="Gunakan kode FRESH20 untuk diskon 20%"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

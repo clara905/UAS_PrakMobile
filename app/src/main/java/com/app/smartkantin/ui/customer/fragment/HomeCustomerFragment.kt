@@ -5,24 +5,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.smartkantin.SmartKantinApp
 import com.app.smartkantin.adapter.MenuGridAdapter
 import com.app.smartkantin.data.repository.MenuRepository
+import com.app.smartkantin.data.repository.PromoRepository
 import com.app.smartkantin.databinding.FragmentHomeCustomerBinding
 import com.app.smartkantin.ui.customer.MenuDetailActivity
 import com.app.smartkantin.utils.SessionManager
 import com.app.smartkantin.viewmodel.MenuViewModel
 import com.app.smartkantin.viewmodel.MenuViewModelFactory
+import com.app.smartkantin.viewmodel.PromoViewModel
+import com.app.smartkantin.viewmodel.PromoViewModelFactory
 
 class HomeCustomerFragment : Fragment() {
 
     private var _binding: FragmentHomeCustomerBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MenuViewModel
+    private lateinit var promoViewModel: PromoViewModel
     private lateinit var adapter: MenuGridAdapter
 
     override fun onCreateView(
@@ -40,8 +43,11 @@ class HomeCustomerFragment : Fragment() {
         binding.tvWelcome.text = "Halo, ${sessionManager.getNama()}!"
 
         val app = requireActivity().application as SmartKantinApp
-        val repository = MenuRepository(app.database.menuDao())
-        viewModel = ViewModelProvider(this, MenuViewModelFactory(repository))[MenuViewModel::class.java]
+        val menuRepository = MenuRepository(app.database.menuDao())
+        val promoRepository = PromoRepository(app.database.promoDao())
+        
+        viewModel = ViewModelProvider(this, MenuViewModelFactory(menuRepository))[MenuViewModel::class.java]
+        promoViewModel = ViewModelProvider(this, PromoViewModelFactory(promoRepository))[PromoViewModel::class.java]
 
         setupRecyclerView()
         setupCategories()
@@ -81,7 +87,15 @@ class HomeCustomerFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.allMenu.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list.take(4)) // Sekilas menu (ambil 4 saja)
+            adapter.submitList(list.take(4)) 
+        }
+
+        promoViewModel.allPromos.observe(viewLifecycleOwner) { promos ->
+            if (promos.isNotEmpty()) {
+                val p = promos.first()
+                binding.tvPromoTitle.text = "Promo Spesial!"
+                binding.tvPromoDesc.text = "Gunakan kode ${p.kodePromo} untuk diskon ${p.persenPotongan}%"
+            }
         }
     }
 

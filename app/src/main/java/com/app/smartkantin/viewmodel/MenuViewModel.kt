@@ -35,9 +35,10 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         namaMenu: String,
         deskripsi: String,
         hargaText: String,
-        gambar: String
+        gambar: String,
+        kategori: String
     ) {
-        if (namaMenu.isBlank() || deskripsi.isBlank() || hargaText.isBlank()) {
+        if (namaMenu.isBlank() || deskripsi.isBlank() || hargaText.isBlank() || kategori.isBlank()) {
             _formState.value = MenuFormState.Error("Semua field wajib diisi")
             return
         }
@@ -54,7 +55,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                 namaMenu = namaMenu,
                 deskripsi = deskripsi,
                 harga = harga,
-                gambar = gambar
+                gambar = gambar,
+                kategori = kategori
             )
             if (id == 0) {
                 repository.insertMenu(menu)

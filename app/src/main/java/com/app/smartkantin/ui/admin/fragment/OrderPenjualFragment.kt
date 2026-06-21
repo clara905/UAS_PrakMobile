@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.smartkantin.SmartKantinApp
 import com.app.smartkantin.adapter.OrderAdapter
 import com.app.smartkantin.databinding.FragmentOrderPenjualBinding
+import com.app.smartkantin.utils.NotificationHelper
+import com.app.smartkantin.utils.OrderStatus
 import com.app.smartkantin.viewmodel.OrderViewModel
 import com.app.smartkantin.viewmodel.OrderViewModelFactory
 
@@ -19,6 +21,7 @@ class OrderPenjualFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: OrderViewModel
     private lateinit var adapter: OrderAdapter
+    private lateinit var notificationHelper: NotificationHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +34,7 @@ class OrderPenjualFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        notificationHelper = NotificationHelper(requireContext())
         val app = requireActivity().application as SmartKantinApp
         viewModel = ViewModelProvider(this, OrderViewModelFactory(app.database.orderDao()))[OrderViewModel::class.java]
 
@@ -40,6 +44,17 @@ class OrderPenjualFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = OrderAdapter(isAdmin = true) { order ->
+            val nextStatus = when (order.status) {
+                com.app.smartkantin.utils.OrderStatus.MENUNGGU -> "Sedang Diproses"
+                com.app.smartkantin.utils.OrderStatus.DIPROSES -> "Siap Diambil"
+                else -> ""
+            }
+            if (nextStatus.isNotEmpty()) {
+                notificationHelper.sendNotification(
+                    "Update Pesanan",
+                    "Pesanan #${order.id} $nextStatus!"
+                )
+            }
             viewModel.updateStatus(order.id, order.status)
         }
         binding.rvOrders.apply {
