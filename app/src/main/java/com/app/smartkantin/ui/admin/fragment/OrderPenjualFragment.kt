@@ -39,7 +39,18 @@ class OrderPenjualFragment : Fragment() {
         viewModel = ViewModelProvider(this, OrderViewModelFactory(app.database.orderDao()))[OrderViewModel::class.java]
 
         setupRecyclerView()
+        setupTabLayout()
         observeViewModel()
+    }
+
+    private fun setupTabLayout() {
+        binding.tabLayout.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
+                observeViewModel() // Refresh data pas ganti tab
+            }
+            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+        })
     }
 
     private fun setupRecyclerView() {
@@ -65,14 +76,23 @@ class OrderPenjualFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.getAllOrders().observe(viewLifecycleOwner) { orders ->
-            if (orders.isNullOrEmpty()) {
+        viewModel.getAllOrders().observe(viewLifecycleOwner) { allOrders ->
+            val selectedTab = binding.tabLayout.selectedTabPosition
+            val filteredOrders = if (selectedTab == 0) {
+                // Tab "Masuk": Tampilkan yang MENUNGGU dan DIPROSES
+                allOrders.filter { it.status == OrderStatus.MENUNGGU || it.status == OrderStatus.DIPROSES }
+            } else {
+                // Tab "Selesai": Tampilkan yang SELESAI
+                allOrders.filter { it.status == OrderStatus.SELESAI }
+            }
+
+            if (filteredOrders.isNullOrEmpty()) {
                 binding.tvEmptyState.visibility = View.VISIBLE
                 binding.rvOrders.visibility = View.GONE
             } else {
                 binding.tvEmptyState.visibility = View.GONE
                 binding.rvOrders.visibility = View.VISIBLE
-                adapter.submitList(orders)
+                adapter.submitList(filteredOrders)
             }
         }
     }

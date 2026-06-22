@@ -46,6 +46,12 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         _categoryFilter.value = category
     }
 
+    fun upsertMenu(menu: MenuEntity) {
+        viewModelScope.launch {
+            repository.upsertMenu(menu)
+        }
+    }
+
     private val _formState = MutableLiveData<MenuFormState>(MenuFormState.Idle)
     val formState: LiveData<MenuFormState> = _formState
 
@@ -75,14 +81,19 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
         _formState.value = MenuFormState.Loading
         viewModelScope.launch {
+            // 1. Upload gambar ke Firebase Storage jika itu URI lokal
+            val finalImageUrl = com.app.smartkantin.utils.FirebaseSync.uploadImage(gambar)
+            
+            // 2. Buat objek menu dengan URL gambar yang sudah online
             val menu = MenuEntity(
                 id = id,
                 namaMenu = namaMenu,
                 deskripsi = deskripsi,
                 harga = harga,
-                gambar = gambar,
+                gambar = finalImageUrl,
                 kategori = kategori
             )
+
             if (id == 0) {
                 val newId = repository.insertMenu(menu).toInt()
                 // Sync menu baru ke Firebase

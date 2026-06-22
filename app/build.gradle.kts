@@ -55,6 +55,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Lifecycle (ViewModel + LiveData) - untuk MVVM
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")

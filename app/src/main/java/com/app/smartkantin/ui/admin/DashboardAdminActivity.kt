@@ -24,6 +24,8 @@ class DashboardAdminActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardAdminBinding
     private lateinit var orderViewModel: OrderViewModel
+    private lateinit var menuViewModel: com.app.smartkantin.viewmodel.MenuViewModel
+    private lateinit var promoViewModel: com.app.smartkantin.viewmodel.PromoViewModel
     private lateinit var notificationHelper: NotificationHelper
     private var lastOrderCount = -1
 
@@ -35,15 +37,53 @@ class DashboardAdminActivity : AppCompatActivity() {
         notificationHelper = NotificationHelper(this)
         val app = application as SmartKantinApp
         orderViewModel = ViewModelProvider(this, OrderViewModelFactory(app.database.orderDao()))[OrderViewModel::class.java]
+        menuViewModel = ViewModelProvider(this, com.app.smartkantin.viewmodel.MenuViewModelFactory(com.app.smartkantin.data.repository.MenuRepository(app.database.menuDao())))[com.app.smartkantin.viewmodel.MenuViewModel::class.java]
+        promoViewModel = ViewModelProvider(this, com.app.smartkantin.viewmodel.PromoViewModelFactory(com.app.smartkantin.data.repository.PromoRepository(app.database.promoDao())))[com.app.smartkantin.viewmodel.PromoViewModel::class.java]
 
         setupBottomNavigation()
         observeNewOrders()
         listenForNewOrdersFirebase()
+        listenForMenuUpdatesFirebase()
+        listenForPromoUpdatesFirebase()
         
         // Load default fragment
         if (savedInstanceState == null) {
             loadFragment(HomePenjualFragment())
         }
+    }
+
+    private fun listenForMenuUpdatesFirebase() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("menus")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                try {
+                    snapshot.children.forEach { child ->
+                        val menu = child.getValue(com.app.smartkantin.data.entity.MenuEntity::class.java)
+                        menu?.let { menuViewModel.upsertMenu(it) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun listenForPromoUpdatesFirebase() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("promos")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                try {
+                    snapshot.children.forEach { child ->
+                        val promo = child.getValue(com.app.smartkantin.data.entity.PromoEntity::class.java)
+                        promo?.let { promoViewModel.upsertPromo(it) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     /**
@@ -54,6 +94,19 @@ class DashboardAdminActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("orders")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                // Sync data Firebase ke Lokal Room
+                try {
+                    snapshot.children.forEach { child ->
+                        val order = child.getValue(com.app.smartkantin.data.entity.OrderEntity::class.java)
+                        // Pastikan ID valid (bukan 0 atau null dari Firebase)
+                        if (order != null && order.id != 0) {
+                            orderViewModel.upsertOrder(order)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
                 val currentCount = snapshot.childrenCount.toInt()
                 if (lastOrderCount != -1 && currentCount > lastOrderCount) {
                     notificationHelper.sendNotification(

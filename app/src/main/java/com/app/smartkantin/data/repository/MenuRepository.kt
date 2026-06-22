@@ -14,6 +14,8 @@ class MenuRepository(private val menuDao: MenuDao) {
 
     suspend fun getMenuById(id: Int): MenuEntity? = menuDao.getMenuById(id)
 
+    suspend fun upsertMenu(menu: MenuEntity) = menuDao.upsertMenu(menu)
+
     suspend fun insertMenu(menu: MenuEntity): Long = menuDao.insertMenu(menu)
 
     suspend fun updateMenu(menu: MenuEntity) = menuDao.updateMenu(menu)

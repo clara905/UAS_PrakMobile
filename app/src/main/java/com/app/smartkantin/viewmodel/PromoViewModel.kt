@@ -24,6 +24,12 @@ class PromoViewModel(private val repository: PromoRepository) : ViewModel() {
         }
     }
 
+    fun upsertPromo(promo: PromoEntity) {
+        viewModelScope.launch {
+            repository.upsertPromo(promo)
+        }
+    }
+
     fun addPromo(kode: String, deskripsi: String, persen: Int) {
         viewModelScope.launch {
             val promo = PromoEntity(kodePromo = kode, deskripsi = deskripsi, persenPotongan = persen, minBelanja = 0.0)

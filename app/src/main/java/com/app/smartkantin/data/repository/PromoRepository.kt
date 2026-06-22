@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class PromoRepository(private val promoDao: PromoDao) {
     fun getAllPromos(): Flow<List<PromoEntity>> = promoDao.getAllPromos()
+    suspend fun upsertPromo(promo: PromoEntity) = promoDao.insertPromo(promo)
     suspend fun insertPromo(promo: PromoEntity): Long = promoDao.insertPromo(promo)
     suspend fun deletePromo(promo: PromoEntity) = promoDao.deletePromo(promo)
     suspend fun getPromoByCode(kode: String) = promoDao.getPromoByCode(kode)

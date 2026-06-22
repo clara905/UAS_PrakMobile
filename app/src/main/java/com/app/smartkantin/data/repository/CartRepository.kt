@@ -44,18 +44,18 @@ class CartRepository(
         if (orderDao == null || orderItemDao == null) return false
         
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())
-        val orderId = orderDao.insertOrder(
-            OrderEntity(
-                userId = userId,
-                totalHarga = total,
-                status = OrderStatus.MENUNGGU,
-                tanggal = date
-            )
-        ).toInt()
+        // Simpan ke Room Lokal
+        val orderEntity = OrderEntity(
+            userId = userId,
+            totalHarga = total,
+            status = OrderStatus.MENUNGGU,
+            tanggal = date
+        )
+        val orderId = orderDao.insertOrder(orderEntity).toInt()
 
-        // Sync ke Firebase setelah simpan lokal berhasil
-        val newOrder = orderDao.getOrderById(orderId)
-        newOrder?.let { com.app.smartkantin.utils.FirebaseSync.sendOrder(it) }
+        // Sync ke Firebase SETELAH dapet ID dari Room (biar ID-nya sinkron)
+        val finalOrder = orderEntity.copy(id = orderId)
+        com.app.smartkantin.utils.FirebaseSync.sendOrder(finalOrder)
 
         val orderItems = items.map {
             OrderItemEntity(

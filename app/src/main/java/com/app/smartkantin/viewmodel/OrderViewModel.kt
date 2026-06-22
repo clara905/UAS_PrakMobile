@@ -15,6 +15,12 @@ class OrderViewModel(private val orderDao: OrderDao) : ViewModel() {
         return orderDao.getAllOrders().asLiveData()
     }
 
+    fun upsertOrder(order: OrderEntity) {
+        viewModelScope.launch {
+            orderDao.upsertOrder(order)
+        }
+    }
+
     fun updateStatus(orderId: Int, newStatus: String) {
         viewModelScope.launch {
             orderDao.updateStatus(orderId, newStatus)

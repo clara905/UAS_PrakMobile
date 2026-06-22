@@ -26,6 +26,8 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardCustomerBinding
     private lateinit var orderViewModel: OrderViewModel
+    private lateinit var menuViewModel: com.app.smartkantin.viewmodel.MenuViewModel
+    private lateinit var promoViewModel: com.app.smartkantin.viewmodel.PromoViewModel
     private lateinit var sessionManager: SessionManager
     private lateinit var notificationHelper: NotificationHelper
     private var lastOrderStatuses = mutableMapOf<Int, String>()
@@ -40,15 +42,53 @@ class DashboardCustomerActivity : AppCompatActivity() {
         
         val app = application as SmartKantinApp
         orderViewModel = ViewModelProvider(this, OrderViewModelFactory(app.database.orderDao()))[OrderViewModel::class.java]
+        menuViewModel = ViewModelProvider(this, com.app.smartkantin.viewmodel.MenuViewModelFactory(com.app.smartkantin.data.repository.MenuRepository(app.database.menuDao())))[com.app.smartkantin.viewmodel.MenuViewModel::class.java]
+        promoViewModel = ViewModelProvider(this, com.app.smartkantin.viewmodel.PromoViewModelFactory(com.app.smartkantin.data.repository.PromoRepository(app.database.promoDao())))[com.app.smartkantin.viewmodel.PromoViewModel::class.java]
 
         setupBottomNavigation()
         observeOrderUpdates()
         listenToFirebaseUpdates()
+        listenForMenuUpdatesFirebase()
+        listenForPromoUpdatesFirebase()
 
         // Load default fragment
         if (savedInstanceState == null) {
             loadFragment(HomeCustomerFragment())
         }
+    }
+
+    private fun listenForMenuUpdatesFirebase() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("menus")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                try {
+                    snapshot.children.forEach { child ->
+                        val menu = child.getValue(com.app.smartkantin.data.entity.MenuEntity::class.java)
+                        menu?.let { menuViewModel.upsertMenu(it) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun listenForPromoUpdatesFirebase() {
+        val database = FirebaseDatabase.getInstance(FirebaseConfig.DATABASE_URL).reference.child("promos")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                try {
+                    snapshot.children.forEach { child ->
+                        val promo = child.getValue(com.app.smartkantin.data.entity.PromoEntity::class.java)
+                        promo?.let { promoViewModel.upsertPromo(it) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     /**
@@ -61,34 +101,40 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { child ->
-                    val orderMap = child.value as? Map<*, *> ?: return@forEach
-                    val fUserId = (orderMap["userId"] as? Long)?.toInt() ?: 0
-                    
-                    // Cek apakah ini pesanan milik user yang sedang login
-                    if (fUserId == userId) {
-                        val orderId = (orderMap["id"] as? Long)?.toInt() ?: 0
-                        val status = orderMap["status"] as? String ?: ""
+                try {
+                    snapshot.children.forEach { child ->
+                        val order = child.getValue(com.app.smartkantin.data.entity.OrderEntity::class.java)
                         
-                        val prevStatus = lastOrderStatuses[orderId]
-                        if (prevStatus != null && prevStatus != status) {
-                            when (status) {
-                                OrderStatus.DIPROSES -> {
-                                    notificationHelper.sendNotification(
-                                        "Pesanan Diproses",
-                                        "Pesanan #$orderId sedang disiapkan penjual."
-                                    )
-                                }
-                                OrderStatus.SELESAI -> {
-                                    notificationHelper.sendNotification(
-                                        "Makanan Siap!",
-                                        "Pesanan #$orderId sudah siap! Silakan ambil di kantin."
-                                    )
+                        // Cek apakah ini pesanan milik user yang sedang login dan ID-nya valid
+                        if (order != null && order.id != 0 && order.userId == userId) {
+                            val orderId = order.id
+                            val status = order.status
+                            
+                            // Update Room lokal dengan data terbaru dari Firebase
+                            orderViewModel.upsertOrder(order)
+                            
+                            val prevStatus = lastOrderStatuses[orderId]
+                            if (prevStatus != null && prevStatus != status) {
+                                when (status) {
+                                    OrderStatus.DIPROSES -> {
+                                        notificationHelper.sendNotification(
+                                            "Pesanan Diproses",
+                                            "Pesanan #$orderId sedang disiapkan penjual."
+                                        )
+                                    }
+                                    OrderStatus.SELESAI -> {
+                                        notificationHelper.sendNotification(
+                                            "Makanan Siap!",
+                                            "Pesanan #$orderId sudah siap! Silakan ambil di kantin."
+                                        )
+                                    }
                                 }
                             }
+                            lastOrderStatuses[orderId] = status
                         }
-                        lastOrderStatuses[orderId] = status
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
 

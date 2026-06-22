@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class PromoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val kodePromo: String,
-    val deskripsi: String,
-    val persenPotongan: Int,
-    val minBelanja: Double
+    val kodePromo: String = "",
+    val deskripsi: String = "",
+    val persenPotongan: Int = 0,
+    val minBelanja: Double = 0.0
 )

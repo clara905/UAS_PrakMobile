@@ -80,8 +80,13 @@ class FormMenuActivity : AppCompatActivity() {
                 binding.actKategori.setText(it.kategori, false)
                 binding.etHarga.setText(it.harga.toInt().toString())
                 selectedImageUri = it.gambar
+                
+                if (it.gambar.startsWith("http")) {
+                    binding.etImageUrl.setText(it.gambar)
+                }
+
                 if (it.gambar.isNotBlank()) {
-                    Glide.with(this).load(Uri.parse(it.gambar))
+                    Glide.with(this).load(it.gambar)
                         .centerCrop().into(binding.ivPreview)
                 }
             }
@@ -95,13 +100,27 @@ class FormMenuActivity : AppCompatActivity() {
             pickImageLauncher.launch("image/*")
         }
 
+        // Preview kalau user masukin link manual
+        binding.etImageUrl.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val url = binding.etImageUrl.text.toString().trim()
+                if (url.startsWith("http")) {
+                    selectedImageUri = url
+                    Glide.with(this).load(url).centerCrop().into(binding.ivPreview)
+                }
+            }
+        }
+
         binding.btnSave.setOnClickListener {
+            val urlManual = binding.etImageUrl.text.toString().trim()
+            val finalImage = if (urlManual.startsWith("http")) urlManual else selectedImageUri
+
             viewModel.saveMenu(
                 id = menuId,
                 namaMenu = binding.etNamaMenu.text.toString().trim(),
                 deskripsi = binding.etDeskripsi.text.toString().trim(),
                 hargaText = binding.etHarga.text.toString().trim(),
-                gambar = selectedImageUri,
+                gambar = finalImage,
                 kategori = binding.actKategori.text.toString().trim()
             )
         }
