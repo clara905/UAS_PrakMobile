@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.app.smartkantin" />
+                  <option name="mobileSdkAppId" value="1:380956322679:android:e529b0ae5204c62ff28f72" />
+                  <option name="projectId" value="smartkantin-91402" />
+                  <option name="projectNumber" value="380956322679" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
